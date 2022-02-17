@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -102,3 +103,10 @@ dist
 
 # TernJS port file
 .tern-port
+=======
+out
+dist
+node_modules
+.vscode-test/
+*.vsix
+>>>>>>> 9c78a227bca1314cc2cb722496eb8f59761f9829
