@@ -1,8 +1,14 @@
+'use strict';
+
+import { Panels } from '@vscode/webview-ui-toolkit';
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { Uri, workspace, WorkspaceFolder } from 'vscode';
 import scrapeFile from './crawler/fileScraper';
 import { ToDoResult } from './crawler/toDoResult';
+import { NodeDependenciesProvider } from './crawler/TreeDataProvider';
+import { HelloWorldPanel } from './crawler/HelloWorldPanel';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -20,13 +26,76 @@ export function activate(context: vscode.ExtensionContext) {
 	disposable.push(vscode.commands.registerCommand('helloworld.helloWorld', async () => {
 		var results = await scrapeFile();
 
-		vscode.window.showInformationMessage(`${results.length} file scraped.`);
+
+		HelloWorldPanel.render(context.extensionUri);
+
+
+		const panel = vscode.window.createWebviewPanel(
+			'helloworld',
+			'ToDo List',
+			vscode.ViewColumn.One,
+			{
+				enableScripts: true
+			}
+		);
+
+		
+		panel.webview.html = getWebviewContent(results);
+		// vscode.window.showInformationMessage(`${results.length} file scraped.`);
 	}));
 
-	disposable.forEach(function (val){
-		context.subscriptions.push(val);
-	});
+
+
+	// if(vscode.workspace.workspaceFolders !== undefined) {
+	// 	let wf = vscode.workspace.workspaceFolders[0].uri.path;
+
+	// 	// const nodeDependenciesProvider = new NodeDependenciesProvider(wf);
+
+	// 	// vscode.window.registerTreeDataProvider(
+	// 	// 	'nodeDependencies',
+	// 	// 	new NodeDependenciesProvider(wf)
+	// 	// );
+
+	// 	// vscode.commands.registerCommand(
+	// 	// 	'nodeDependencies.refreshEntry', 
+	// 	// 	() =>
+	// 	//   	nodeDependenciesProvider.refresh()
+	// 	// );
+
+	// 	// vscode.window.createTreeView('nodeDependencies', {
+	// 	// 	treeDataProvider: new NodeDependenciesProvider(wf)
+	// 	// });
+	// }
+	// else {
+	// 	var message = "YOUR-EXTENSION: Working folder not found, open a folder an try again" ;
+	
+	// 	vscode.window.showErrorMessage(message);
+	// }
+
+	
+
+	 
+	// let path: string;
+        // if (!vscode.workspace.workspaceFolders) {
+        //     var path = vscode.workspace.workspaceFolders[0].uri;
+        // } else {
+        //     let root: vscode.WorkspaceFolder;
+        //     if (vscode.workspace.workspaceFolders.length === 1) {
+        //         root = vscode.workspace.workspaceFolders[0];
+        //     } else {
+        //         root = vscode.workspace.getWorkspaceFolder(resource);
+        //     }
+
+        //     path = root.uri.fsPath;
+        // }
+
+	// disposable.forEach(function (val){
+	// 	context.subscriptions.push(val);
+	// });
 }
+
+
+
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
@@ -34,3 +103,20 @@ export function deactivate() {}
 
 
 
+function getWebviewContent (results: ToDoResult[]): string {
+
+	return `<!DOCTYPE html>
+		  <html lang="en">
+			  <head>
+				  <meta charset="UTF-8">
+				  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+				  <title>Todo Task Manager</title>
+			  </head>
+			  <body>
+				  <h1>${results.length} file scraped.</h1>
+				  ${results.map(x => 
+				`<input type="checkbox" name="${x.toDoId}" value="${x.toDoId}"> 
+				 <label for="${x.toDoId}"> ${x.filename} </label>`)}
+			  </body>
+		  </html>`;
+  }
