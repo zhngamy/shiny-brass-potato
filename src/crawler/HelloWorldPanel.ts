@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { ToDoResult } from "./toDoResult";
 
 export class HelloWorldPanel {
   public static currentPanel: HelloWorldPanel | undefined;
@@ -13,32 +14,38 @@ export class HelloWorldPanel {
     this._panel.webview.html = this._getWebviewContent(this._panel.webview, extensionUri);
   }
 
-  private _getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri) {
-    // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
+  public _getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri,  ) {
     return /*html*/ `
       <!DOCTYPE html>
       <html lang="en">
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Hello World!</title>
+          <title>Todo Task Manager Extension</title>
         </head>
         <body>
-          <h1>Hello World!</h1>
-        </body>
+				   wut even iz this
+			  </body>
       </html>
     `;
   }
 
-  public static render(extensionUri: vscode.Uri) {
+  public static render(extensionUri: vscode.Uri, results: ToDoResult[]) {
     if (HelloWorldPanel.currentPanel) {
       HelloWorldPanel.currentPanel._panel.reveal(vscode.ViewColumn.One);
     } else {
-      const panel = vscode.window.createWebviewPanel("helloworld", "Hello World", vscode.ViewColumn.One, {
+      const panel = vscode.window.createWebviewPanel(
+        "helloworld", 
+        "Hello World", 
+        vscode.ViewColumn.Two, {
         // Empty for now
+          enableScripts: true
       });
 
+
+      panel.webview.html = _getWebviewContent(results);
       HelloWorldPanel.currentPanel = new HelloWorldPanel(panel, extensionUri);
+      
     }
   }
 
@@ -54,4 +61,22 @@ export class HelloWorldPanel {
       }
     }
   }
+}
+
+function _getWebviewContent(results: ToDoResult[]): string {
+  return `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Todo Task Manager Extension</title>
+        </head>
+        <body>
+				    <h1>${results.length} file scraped.</h1>
+				    ${results.map(x => 
+				      `<vscode-checkbox checked required>Checked + Required</vscode-checkbox>`)}
+			  </body>
+      </html>
+    `;
 }

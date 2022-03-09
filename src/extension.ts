@@ -5,7 +5,7 @@ import { Panels } from '@vscode/webview-ui-toolkit';
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { Uri, workspace, WorkspaceFolder } from 'vscode';
-import scrapeFile from './crawler/fileScraper';
+import scrapeFile from './crawler/fileScraperNodeStream';
 import { ToDoResult } from './crawler/toDoResult';
 import { NodeDependenciesProvider } from './crawler/TreeDataProvider';
 import { HelloWorldPanel } from './crawler/HelloWorldPanel';
@@ -26,8 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
 	disposable.push(vscode.commands.registerCommand('helloworld.helloWorld', async () => {
 		var results = await scrapeFile();
 
-
-		HelloWorldPanel.render(context.extensionUri);
+		HelloWorldPanel.render(context.extensionUri, results);
 
 
 		const panel = vscode.window.createWebviewPanel(
@@ -115,8 +114,14 @@ function getWebviewContent (results: ToDoResult[]): string {
 			  <body>
 				  <h1>${results.length} file scraped.</h1>
 				  ${results.map(x => 
-				`<input type="checkbox" name="${x.toDoId}" value="${x.toDoId}"> 
-				 <label for="${x.toDoId}"> ${x.filename} </label>`)}
+				`<input type="checkbox" checked required name="${x.toDoId}" value="${x.toDoId}"/> Checked + Required
+				<label for="${x.toDoId}"> ${x.filename} </label>`
+				)}
+			
+				<vscode-checkbox> vscode checkbox </vscode-checkbox>
 			  </body>
 		  </html>`;
   }
+
+//   `<input type="checkbox" name="${x.toDoId}" value="${x.toDoId}"> 
+//   <label for="${x.toDoId}"> ${x.filename} </label>`)}

@@ -2,7 +2,7 @@ import { countReset } from 'console';
 import * as vscode from 'vscode';
 import { ToDoResult } from './toDoResult';
 
-async function scrapeFile() {
+async function scrapeFile() : Promise<ToDoResult[]> {
     var resultArr: ToDoResult[] = [];
 
 
