@@ -114,11 +114,15 @@ function getWebviewContent (results: ToDoResult[]): string {
 			  <body>
 				  <h1>${results.length} file scraped.</h1>
 				  ${results.map(x => 
-				`<input type="checkbox" checked required name="${x.toDoId}" value="${x.toDoId}"/> Checked + Required
-				<label for="${x.toDoId}"> ${x.filename} </label>`
+				`<div style="display:flex;justify-content:space-between">
+					<div>
+						<input type="checkbox" required name="${x.toDoId}" value="${x.toDoId}"/>
+						<label for="${x.toDoId}"> ${x.todostatement} </label>
+					</div>
+					<div><span>${x.linenumber}</span></div>
+					<div><span>${x.filename}</span></div>
+				 </div>`
 				)}
-			
-				<vscode-checkbox> vscode checkbox </vscode-checkbox>
 			  </body>
 		  </html>`;
   }
