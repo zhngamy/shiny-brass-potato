@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { ToDoResult } from "./toDoResult";
+import { ToDoResult } from "../shared/ToDoResult";
 
 export class HelloWorldPanel {
   public static currentPanel: HelloWorldPanel | undefined;

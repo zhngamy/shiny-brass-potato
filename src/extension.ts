@@ -6,7 +6,7 @@ import { Panels } from '@vscode/webview-ui-toolkit';
 import * as vscode from 'vscode';
 import { Uri, workspace, WorkspaceFolder } from 'vscode';
 import scrapeFile from './crawler/fileScraperNodeStream';
-import { ToDoResult } from './crawler/toDoResult';
+import { ToDoResult } from './shared/ToDoResult';
 import { NodeDependenciesProvider } from './crawler/TreeDataProvider';
 import { HelloWorldPanel } from './crawler/HelloWorldPanel';
 

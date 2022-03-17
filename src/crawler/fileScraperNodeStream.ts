@@ -1,8 +1,8 @@
 
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { ToDoResult } from './toDoResult';
-import { resourceLimits } from 'worker_threads';
+import { ToDoResult } from '../shared/ToDoResult';
+import { ScrapedLineResult } from './ScrapedLineResult';
 
 const readline = require('readline');
 const stream = require('stream');
@@ -11,7 +11,7 @@ async function scrapeFile() : Promise<ToDoResult[]> {
     var resultArr: ToDoResult[] = [];
 
 
-    const files = await vscode.workspace.findFiles('**/*.html', '**/node_modules/**');
+    const files = await vscode.workspace.findFiles('**/*.js*', GetExcludeProperties());
 
     if (files.length === 0){
         vscode.window.showWarningMessage('No file with the particular file formats were found'); 
@@ -19,7 +19,6 @@ async function scrapeFile() : Promise<ToDoResult[]> {
 
     vscode.window.showInformationMessage('# of files', files.length.toString());
 
-    var counter = 0;
     //get all files in workspace
     //read all files and look for certain keyword
     for (let file of files){
@@ -31,33 +30,37 @@ async function scrapeFile() : Promise<ToDoResult[]> {
         //todo: parse out filename from file url
         var url = file.fsPath;
         var filename = url.substring(url.lastIndexOf('/')+1);
-        searchStream("test"+counter, "todo").then(stream => {
-            for(let res in stream){
-                var result = new ToDoResult(counter++, filename, 2, res);
-                resultArr.push(result);
-            }
-        });
+        var result = await searchFile(url, "todo");
+        
+        for(var i = 0; i < result.length; i++) {
+            var todo = new ToDoResult(i + 1, filename, result[i].lineNumber, result[i].lineValue);
+            resultArr.push(todo);
+        }
+        
     }
     return resultArr;
 }
 
-const searchStream = (filename:string, text:string):Promise<string[]> => { 
-    return new Promise((resolve) => {
-        const inStream = fs.createReadStream('file/' + filename + ".txt");
-        const outStream = new stream;
-        const rl = readline.createInterface(inStream, outStream);
-        var result:string[];
-        const regEx = new RegExp(text, "i");
-        rl.on('line', function (line:string) {
-            if (line && line.search(regEx) >= 0) {
-                result.push(line);
-            }
-        });
-        rl.on('close', function () {
-            console.log('finished search', filename);
-            resolve(result);
-        });
-    });
+async function searchFile(infilename:string, text:string):Promise<ScrapedLineResult[]> { 
+    const inStream = fs.createReadStream(infilename);
+    const outStream = new stream;
+    const rl = readline.createInterface({ input: inStream, crlfDelay: Infinity });
+    var result:ScrapedLineResult[] = [];
+    const regEx = new RegExp(text, "i");
+    var i = 1;
+    for await (const line of rl) {
+        if (line && line.search(regEx) >= 0) {
+            result.push(new ScrapedLineResult(i, line.trim()));
+        }
+        i++;
+    }
+
+    return result;
+}
+
+const GetExcludeProperties = (): string => {
+    return '{**/node_modules/**,*.json,**/.*/**}';
+};
 
     //     const inStream = fs.createReadStream('file/' + filename + ".txt");
     //     const outStream = new stream;
@@ -73,9 +76,6 @@ const searchStream = (filename:string, text:string):Promise<string[]> => {
     //         console.log('finished search', filename);
     //         return result;
     //     });
-
-        
-};
 
 /*
 
