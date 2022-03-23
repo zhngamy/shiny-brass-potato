@@ -11,7 +11,7 @@ async function scrapeFile() : Promise<ToDoResult[]> {
     var resultArr: ToDoResult[] = [];
 
 
-    const files = await vscode.workspace.findFiles('**/*.js*', GetExcludeProperties());
+    const files = await vscode.workspace.findFiles(GetIncludedProperties(), GetExcludeProperties());
 
     if (files.length === 0){
         vscode.window.showWarningMessage('No file with the particular file formats were found'); 
@@ -50,13 +50,18 @@ async function searchFile(infilename:string, text:string):Promise<ScrapedLineRes
     var i = 1;
     for await (const line of rl) {
         if (line && line.search(regEx) >= 0) {
-            result.push(new ScrapedLineResult(i, line.trim()));
+            var cleansed = line.replace(/[|&;$%@"<>()+,]/g, "");
+            result.push(new ScrapedLineResult(i, cleansed.trim()));
         }
         i++;
     }
 
     return result;
 }
+
+const GetIncludedProperties = (): string => {
+    return '{**/*.js*,**/*.html*,**/*.ts*}';
+};
 
 const GetExcludeProperties = (): string => {
     return '{**/node_modules/**,*.json,**/.*/**}';
@@ -67,7 +72,7 @@ const GetExcludeProperties = (): string => {
     //     const rl = readline.createInterface(inStream, outStream);
     //     var result:string[];
     //     const regEx = new RegExp(text, "i");
-    //     rl.on('line', function (line:string) {
+    //     rl.on('lipzne', function (line:string) {
     //         if (line && line.search(regEx) >= 0) {
     //             result.push(line);
     //         }
