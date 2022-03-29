@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-# silver-brass-poodle
-=======
-# helloworld README
+# todoList README
 
-This is the README for your extension "helloworld". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "todoList". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 
@@ -71,4 +68,3 @@ Ensure that you've read through the extensions guidelines and follow the best pr
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!**
->>>>>>> 9c78a227bca1314cc2cb722496eb8f59761f9829
