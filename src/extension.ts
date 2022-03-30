@@ -7,6 +7,7 @@ import scrapeFile from './crawler/fileScraperNodeStream';
 import { ToDoResult } from './shared/ToDoResult';
 import { HelloWorldPanel } from './crawler/HelloWorldPanel';
 import path = require('path');
+import webview from './presentation/webview';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -36,39 +37,15 @@ export function activate(context: vscode.ExtensionContext) {
 		// Get path to resource on disk
 		const onDiskPath = vscode.Uri.file(path.join(context.extensionPath, 'css', 'styles.css'));
 		const cssUri = panel.webview.asWebviewUri(onDiskPath);
+
 		// And get the special URI to use with the webview
-		panel.webview.html = getWebviewContent(cssUri, results);
+		panel.webview.html = webview(cssUri, results);
 		console.log(panel.webview.html);
 	}));
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
-
-function getWebviewContent (uri: vscode.Uri, results: ToDoResult[]): string {
-	return `<!DOCTYPE html>
-		  <html lang="en">
-			  <head>
-				  <meta charset="UTF-8">
-				  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-				  <link rel='stylesheet' href='`+ uri + `' />
-				  <title>Todo Task Manager</title>
-			  </head>
-			  <body>
-				  <h1>${results.length} file scraped.</h1>
-				  ${results.map(x => 
-				`<div class="list-element">
-					<div>
-						<input type="checkbox" required name="${x.toDoId}" value="${x.toDoId}"/>
-						<label for="${x.toDoId}"> ${x.todostatement} </label>
-					</div>
-					<div><span>${x.linenumber}</span></div>
-					<div><span>${x.filename}</span></div>
-				 </div>`
-				)}
-			  </body>
-		  </html>`;
-  }
 
 //   `<input type="checkbox" name="${x.toDoId}" value="${x.toDoId}"> 
 //   <label for="${x.toDoId}"> ${x.filename} </label>`)}
