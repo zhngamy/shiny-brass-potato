@@ -39,7 +39,7 @@ const webview = (cssUri: vscode.Uri, jsUri: vscode.Uri, results :ToDoResult[]) =
 									<tr id="row_${x.toDoId}" class="alert">
 										<td>
 											<label class="checkbox-wrap checkbox-primary">
-												<input type="checkbox">
+												<input type="checkbox" onclick="MarkItemDone(${x.toDoId})">
 												<span class="checkmark"></span>
 											</label>
 										</td>
