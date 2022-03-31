@@ -21,6 +21,7 @@ async function scrapeFile() : Promise<ToDoResult[]> {
 
     //get all files in workspace
     //read all files and look for certain keyword
+    let id = 1;
     for (let file of files){
         
         const currentFilePath = vscode.workspace.asRelativePath(
@@ -33,7 +34,7 @@ async function scrapeFile() : Promise<ToDoResult[]> {
         var result = await searchFile(url, "todo");
         
         for(var i = 0; i < result.length; i++) {
-            var todo = new ToDoResult(i + 1, filename, result[i].lineNumber, result[i].lineValue);
+            var todo = new ToDoResult(id++, filename, result[i].lineNumber, result[i].lineValue);
             resultArr.push(todo);
         }
         

@@ -4,13 +4,15 @@ import * as fs from 'fs';
 
 import { ToDoResult } from '../shared/ToDoResult';
 
-const webview = (cssUri: vscode.Uri, results :ToDoResult[]) => {
+const webview = (cssUri: vscode.Uri, jsUri: vscode.Uri, results :ToDoResult[]) => {
 	return `<!DOCTYPE html>
 		  <html lang="en">
 			  <head>
 				  <meta charset="UTF-8">
 				  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 				  <title>Todo Task Manager</title>
+				  <script src="`+ jsUri + `"></script>
+				  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 				  <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
     			  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 				  <link rel='stylesheet' href='`+ cssUri + `' />
@@ -34,7 +36,7 @@ const webview = (cssUri: vscode.Uri, results :ToDoResult[]) => {
 									<tbody>
 									${results.map(x => 
 									`
-									<tr class="alert">
+									<tr id="row_${x.toDoId}" class="alert">
 										<td>
 											<label class="checkbox-wrap checkbox-primary">
 												<input type="checkbox">
@@ -51,7 +53,7 @@ const webview = (cssUri: vscode.Uri, results :ToDoResult[]) => {
 											<span> ${x.linenumber} </span>
 										</td>
 										<td>
-											<button type="button">
+											<button type="button" onclick="RemoveTodo(${x.toDoId})">
 												<span>
 													<i class="fa fa-close"></i>
 												</span>

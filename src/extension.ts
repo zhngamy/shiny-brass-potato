@@ -35,11 +35,14 @@ export function activate(context: vscode.ExtensionContext) {
 		);
 		
 		// Get path to resource on disk
-		const onDiskPath = vscode.Uri.file(path.join(context.extensionPath, 'css', 'styles.css'));
-		const cssUri = panel.webview.asWebviewUri(onDiskPath);
+		const cssDiskPath = vscode.Uri.file(path.join(context.extensionPath, 'css', 'styles.css'));
+		const cssUri = panel.webview.asWebviewUri(cssDiskPath);
+
+		const jsDiskPath = vscode.Uri.file(path.join(context.extensionPath, 'js', 'app.js'));
+		const jsUri = panel.webview.asWebviewUri(jsDiskPath);
 
 		// And get the special URI to use with the webview
-		panel.webview.html = webview(cssUri, results);
+		panel.webview.html = webview(cssUri, jsUri, results);
 		console.log(panel.webview.html);
 	}));
 }
